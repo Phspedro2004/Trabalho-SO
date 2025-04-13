@@ -1,0 +1,62 @@
+Processo Cliente
+• Envia "requisições de banco" para o servidor:
+o Exemplo de requisição: SELECT nome WHERE id=5 ou INSERT id=7
+nome='João'
+• A comunicação é feita via pipe ou memória compartilhada.
+
+. Processo Servidor (Gerenciador de Banco)
+• Lê as requisições do pipe ou memória compartilhada.
+• Cria um pool de threads para processar cada requisição.
+• As threads acessam um "banco de dados simulado" (pode ser um vetor ou arquivo
+.txt/.json/.sqlite) e usam mutex/semáforo para garantir a integridade dos dados.
+• As respostas podem ser salvas em um segundo canal IPC, ou em um arquivo de log.
+Requisições Suportadas
+• INSERT: Adiciona um novo registro (linha) no "banco".
+• DELETE: Remove um registro.
+Estrutura interna do "banco":
+typedef struct {
+ int id;
+ char nome[50];
+} Registro;
+
+
+
+Uso de Threads e Mutex/Semáforo
+• Threads compartilham a mesma "tabela de dados".
+• Acesso à tabela (inserção, delete) é protegido por:
+o pthread_mutex_t (para exclusão mútua), ou
+o sem_t (para controle mais geral, como múltiplas leituras simultâneas).
+• Isso evita condições de corrida e garante a consistência dos dados.
+• Adapte para a linguagem que você escolheu.
+
+Fluxo do Sistema
+[Cliente envia requisição SQL]
+ ↓
+[Pipe ou Memória Compartilhada]
+ ↓
+[Servidor (com threads)]
+ ↓
+[Tabela de Dados com Mutex/Semáforo]
+ ↓
+[Respostas/Logs ou Arquivo com Resultados] (Opcional)
+
+Estrutura de Arquivos Sugerida (pode ser adaptado para a linguagem que vocês
+escolherem)
+bd_simulado/
+├── cliente.c # Envia requisições para o servidor
+├── servidor.c # Recebe requisições e usa threads
+├── banco.h # Structs e defines
+└── banco.txt # Simulação da base de dados
+
+Conceitos Praticados
+• IPC com pipe ou memória compartilhada.
+• Criação e sincronização de processos.
+• Threads com controle de concorrência (mutex/semaphore).
+• Simulação de SGBD leve (com INSERT/DELETE).
+• Leitura e escrita concorrente em arquivo ou estrutura em memória.
+Pontuação Extra na M1
+Vocês irão receber de 0,5 à 1,5 pontos na prova da M1 caso implemente também as operações:
+• SELECT: Busca e retorna dados com base em critérios simples (por exemplo, por ID).
+• UPDATE: Modifica um campo de um registro.
+A nota extra fica a critério do professor em avaliar o contexto de aplicação, bem como a
+qualidade do código e aplicabilidade
