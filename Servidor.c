@@ -45,7 +45,8 @@ void Enfileirar(Task task) {
     pthread_mutex_lock(&mutexQueue);
 
     if (taskCount < MAX_TASKS) {
-        taskQueue[taskCount++] = task;
+        taskQueue[taskCount] = task;
+        taskCount++;
         pthread_cond_signal(&condQueue); // Notifica uma thread que tem trabalho novo
         printf("[FILA] Tarefa enfileirada: %s\n", task.requisicao);
     } else {
