@@ -97,6 +97,13 @@ int main()
             fd = open(myfifo, O_WRONLY);
             write(fd,buffer, strlen(buffer) + 1);
             close(fd);
+            
+            int fd_resposta = open("/tmp/resposta", O_RDONLY);
+            char resposta[256];
+            read(fd_resposta, resposta, sizeof(resposta));
+            close(fd_resposta);
+            printf("Resposta do servidor: %s\n", resposta);
+
         }
     }
     printf("Cliente Encerrado");
