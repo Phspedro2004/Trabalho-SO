@@ -7,4 +7,4 @@ typedef struct {
     char nome[50];
 } Registro;
 
-#endif;
+#endif
